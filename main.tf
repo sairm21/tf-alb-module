@@ -11,6 +11,14 @@ resource "aws_security_group" "alb-sg" {
     cidr_blocks      = var.sg_subnet_cidr
   }
 
+  ingress {
+    description      = "Allow inbound traffic for ${var.name}-${var.env}"
+    from_port        = 80
+    to_port          = 80
+    protocol         = "tcp"
+    cidr_blocks      = var.sg_subnet_cidr
+  }
+
   egress {
     from_port        = 0
     to_port          = 0
@@ -40,7 +48,11 @@ resource "aws_lb" "alb" {
 resource "aws_lb_listener" "main" {
   load_balancer_arn = aws_lb.alb.arn
   port              = var.port
-  protocol          = "HTTP"
+  protocol          = "HTTPS"
+  ssl_policy        = "ELBSecurityPolicy-2016-08"
+  certificate_arn   = "arn:aws:acm:us-east-1:804838709963:certificate/90de4061-551c-4ad4-b411-f7d790aef878"
+
+
   default_action {
     type = "fixed-response"
 

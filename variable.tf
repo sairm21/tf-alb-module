@@ -2,7 +2,7 @@ variable "name" {}
 variable "env" {}
 variable "vpc_id" {}
 variable "port" {
-  default = 80
+  default = 443
 }
 variable "sg_subnet_cidr" {}
 variable "tags" {}
