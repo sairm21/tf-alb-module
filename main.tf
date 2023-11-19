@@ -46,6 +46,7 @@ resource "aws_lb" "alb" {
 }
 
 resource "aws_lb_listener" "main" {
+  count = var.name == "Public" ? 1 : 0
   load_balancer_arn = aws_lb.alb.arn
   port              = var.port
   protocol          = "HTTPS"
@@ -64,7 +65,8 @@ resource "aws_lb_listener" "main" {
   }
 }
 
-resource "aws_lb_listener" "front_end" {
+resource "aws_lb_listener" "public" {
+  count = var.name == "Public" ? 1 : 0
   load_balancer_arn = aws_lb.alb.arn
   port              = "80"
   protocol          = "HTTP"
@@ -76,6 +78,23 @@ resource "aws_lb_listener" "front_end" {
       port        = "443"
       protocol    = "HTTPS"
       status_code = "HTTP_301"
+    }
+  }
+}
+
+resource "aws_lb_listener" "private" {
+  count = var.name == "Private" ? 1 : 0
+  load_balancer_arn = aws_lb.alb.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "Default response"
+      status_code  = "200"
     }
   }
 }
